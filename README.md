@@ -38,6 +38,8 @@ socket.open();
 
 Run that example with multiple tabs open (and connected to a websocket server that will respond appropriately) and watch how only one tab actually maintains the websocket connection.
 
+The `Sockette` class is an `EventEmitter` (specifically an [`EventEmitter3`](https://github.com/primus/eventemitter3)), so you can use any of `addListener`, `on`, `once`, `removeListener`, etc. on the `Sockette` instance.
+
 ### Auto-reconnecting WebSocket Example
 
 ```js
