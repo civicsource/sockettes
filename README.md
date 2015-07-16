@@ -4,7 +4,7 @@
 
 &nbsp;                      | &nbsp;
 --------------------------- | ---------------------------
-![rockettes](rockettes.jpg) | ![sockettes](sockettes.svg)
+![rockettes](rockettes.jpg) | ![sockettes](logo.png)
 
 A WebSocket wrapper which will only allow one WebSocket connection per browser session (no matter how many tabs). All browser tabs will communicate through the WebSocket on the designated "master" tab.
 
