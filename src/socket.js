@@ -11,7 +11,9 @@ export default class Sockette extends EventEmitter {
 
 		this.tabsListening = {};
 
-		subscribeToTabEvents.call(this);
+		if (crosstab.supported) {
+			subscribeToTabEvents.call(this);
+		}
 	}
 
 	open() {
@@ -78,7 +80,11 @@ function subscribeToTabEvents() {
 		}
 	});
 
-	crosstab.on("socket.opened", this.emit.bind(this, "opened"));
+	crosstab.on("socket.opened", () => {
+		this.isOpen = true;
+		this.emit("opened");
+	});
+
 	crosstab.on("socket.closed", this.emit.bind(this, "closed"));
 
 	crosstab.on("socket.message", ev => {

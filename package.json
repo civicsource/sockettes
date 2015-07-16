@@ -6,7 +6,7 @@
   "author": "Archon Information Systems",
   "license": "MIT",
   "scripts": {
-    "test": "jshint src",
+    "test": "jshint src tests && mocha --compilers js:babel/register --recursive tests",
     "compile": "babel -d lib src",
     "prepublish": "npm run test && npm run compile"
   },
@@ -21,6 +21,9 @@
   },
   "devDependencies": {
     "babel": "^5.6.23",
-    "jshint": "^2.8.0"
+    "chai": "^3.0.0",
+    "jshint": "^2.8.0",
+    "mocha": "^2.2.5",
+    "sinon": "^1.15.4"
   }
 }
