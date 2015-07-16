@@ -1,10 +1,8 @@
-# Sockettes
+# ![sockettes](logo.png) Sockettes
 
 > Smoothly choreograph your WebSocket connections
 
-&nbsp;                      | &nbsp;
---------------------------- | ---------------------------
-![rockettes](rockettes.jpg) | ![sockettes](logo.png)
+![rockettes](rockettes.jpg)
 
 A WebSocket wrapper which will only allow one WebSocket connection per browser session (no matter how many tabs). All browser tabs will communicate through the WebSocket on the designated "master" tab.
 
