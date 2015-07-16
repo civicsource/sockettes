@@ -10,6 +10,10 @@ If one tab tries to close a WebSocket while other tabs are still using it, the W
 
 It uses the [crosstab library](https://github.com/tejacques/crosstab) under the covers for browser tab communication.
 
+## Browser Support
+
+It supports all browsers that support `WebSocket`. Generally, this is IE 10+. On mobile, the library will fall back to using normal WebSocket connections rather than trying to do tab communication.
+
 ## Usage
 
 ```
