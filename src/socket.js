@@ -20,16 +20,6 @@ export default class Sockette extends EventEmitter {
 		crosstab.broadcast("socket.close");
 	}
 
-	forceClose() {
-		this.isForceClosed = true;
-		this.socket.close();
-	}
-
-	undoForceClose() {
-		delete this.isForceClosed;
-		this.open();
-	}
-
 	send(data) {
 		crosstab.broadcast("socket.send", data);
 	}
@@ -53,7 +43,7 @@ function subscribeToTabEvents() {
 	crosstab.on("socket.open", ev => {
 		this.tabsListening[ev.origin] = true;
 
-		if (isMasterTab() && !this.isForceClosed) {
+		if (isMasterTab()) {
 			openSocket.call(this);
 		}
 	});
