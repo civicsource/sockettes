@@ -1,4 +1,4 @@
-# ![sockettes](logo.png) Sockettes
+# <img src="logo.png" alt="" style="height: 1em" /> Sockettes
 
 > Smoothly choreograph your WebSocket connections
 
