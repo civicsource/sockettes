@@ -13,15 +13,27 @@ export default class Sockette extends EventEmitter {
 	}
 
 	open() {
-		crosstab.broadcast("socket.open");
+		if (crosstab.supported) {
+			crosstab.broadcast("socket.open");
+		} else {
+			openSocket.call(this);
+		}
 	}
 
 	close() {
-		crosstab.broadcast("socket.close");
+		if (crosstab.supported) {
+			crosstab.broadcast("socket.close");
+		} else {
+			closeSocket.call(this);
+		}
 	}
 
 	send(data) {
-		crosstab.broadcast("socket.send", data);
+		if (crosstab.supported) {
+			crosstab.broadcast("socket.send", data);
+		} else {
+			sendOnSocket.call(this, data);
+		}
 	}
 
 	isAnyTabsListening() {
@@ -60,7 +72,7 @@ function subscribeToTabEvents() {
 		this.tabsListening[ev.origin] = true;
 
 		if (isMasterTab()) {
-			this.socket.send(JSON.stringify(ev.data));
+			sendOnSocket.call(this, ev.data);
 		}
 	});
 
@@ -87,10 +99,22 @@ function openSocket() {
 		var url = isFunction(this.url) ? this.url() : this.url;
 		this.socket = new WebSocket(url);
 
-		this.socket.onopen = crosstab.broadcast.bind(crosstab, "socket.opened");
+		this.socket.onopen = () => {
+			if (crosstab.supported) {
+				crosstab.broadcast("socket.opened");
+			} else {
+				this.emit("opened");
+			}
+		};
+
 		this.socket.onclose = () => {
 			this.socket = null;
-			crosstab.broadcast("socket.closed");
+
+			if (crosstab.supported) {
+				crosstab.broadcast("socket.closed");
+			} else {
+				this.emit("closed");
+			}
 		};
 
 		this.socket.onerror = err => {
@@ -102,8 +126,19 @@ function openSocket() {
 
 		this.socket.onmessage = ev => {
 			var msg = JSON.parse(ev.data);
-			crosstab.broadcast("socket.message", msg);
+
+			if (crosstab.supported) {
+				crosstab.broadcast("socket.message", msg);
+			} else {
+				this.emit("message", msg);
+			}
 		};
+	}
+}
+
+function sendOnSocket(data) {
+	if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+		this.socket.send(JSON.stringify(data));
 	}
 }
 
