@@ -2,6 +2,8 @@
 
 > Smoothly choreograph your WebSocket connections
 
+![rockettes](rockettes.jpg)
+
 A WebSocket wrapper which will only allow one WebSocket connection per browser session (no matter how many tabs). All browser tabs will communicate through the WebSocket on the designated "master" tab.
 
 If one tab tries to close a WebSocket while other tabs are still using it, the WebSocket will remain open. Only until all tabs call `close` will the WebSocket actually be closed no matter which tab actually is maintaining the WebSocket connection.
