@@ -10,86 +10,123 @@ describe("Opening a socket connection", function() {
 	var socket, isOpenEventRaised;
 	behavesLikeStubs();
 
-	beforeEach(function() {
-		crosstab.supported = true;
+	describe("with crosstab supported", function(){
+		beforeEach(function() {
+			crosstab.supported = true;
 
-		isOpenEventRaised = false;
+			isOpenEventRaised = false;
 
-		socket = new Sockette("wss://example.com/");
-		socket.on("opened", () => { isOpenEventRaised = true; });
+			socket = new Sockette("wss://example.com/");
+			socket.on("opened", () => { isOpenEventRaised = true; });
+		});
+
+		describe("when opening a socket connection as the master tab", function() {
+			beforeEach(function(done) {
+				crosstab.id = "master";
+
+				socket.open();
+
+				setTimeout(done, 0);
+			});
+
+			it("should raise opened event", function() {
+				expect(isOpenEventRaised).to.be.true;
+			});
+
+			it("should mark the socket as opened", function() {
+				expect(socket.isOpen).to.be.true;
+			});
+
+			it("should broadcast open message on crosstab", function() {
+				expect(crosstab.broadcast.called).to.be.true;
+			});
+
+			it("should open a real websocket connection", function() {
+				expect(this.isWebSocketOpened).to.be.true;
+			});
+		});
+
+		describe("when opening a socket connection not as the master tab", function() {
+			beforeEach(function(done) {
+				crosstab.id = "other_tab";
+
+				socket.open();
+
+				setTimeout(done, 0);
+			});
+
+			it("should not raise opened event", function() {
+				expect(isOpenEventRaised).to.be.false;
+			});
+
+			it("should not mark the socket as opened", function() {
+				expect(socket.isOpen).to.be.false;
+			});
+
+			it("should broadcast open message on crosstab", function() {
+				expect(crosstab.broadcast.called).to.be.true;
+			});
+
+			it("should not open a real websocket connection", function() {
+				expect(this.isWebSocketOpened).to.be.false;
+			});
+		});
+
+		describe("when another master tab opens a socket connection", function() {
+			beforeEach(function(done) {
+				crosstab.id = "other_tab";
+
+				crosstab.broadcast("socket.opened");
+
+				setTimeout(done, 0);
+			});
+
+			it("should raise opened event", function() {
+				expect(isOpenEventRaised).to.be.true;
+			});
+
+			it("should mark the socket as opened", function() {
+				expect(socket.isOpen).to.be.true;
+			});
+
+			it("should not open a real websocket connection", function() {
+				expect(this.isWebSocketOpened).to.be.false;
+			});
+		});
 	});
 
-	describe("when opening a socket connection as the master tab", function() {
-		beforeEach(function(done) {
-			crosstab.id = "master";
+	describe("without crosstab supported", function(){
+		beforeEach(function() {
+			crosstab.supported = false;
 
-			socket.open();
+			isOpenEventRaised = false;
 
-			setTimeout(done, 0);
+			socket = new Sockette("wss://example.com/");
+			socket.on("opened", () => { isOpenEventRaised = true; });
 		});
 
-		it("should raise opened event", function() {
-			expect(isOpenEventRaised).to.be.true;
-		});
+		describe("when opening a socket connection", function() {
+			beforeEach(function(done) {
+				socket.open();
 
-		it("should mark the socket as opened", function() {
-			expect(socket.isOpen).to.be.true;
-		});
+				setTimeout(done, 0);
+			});
 
-		it("should broadcast open message on crosstab", function() {
-			expect(crosstab.broadcast.called).to.be.true;
-		});
+			it("should raise opened event", function() {
+				expect(isOpenEventRaised).to.be.true;
+			});
 
-		it("should open a real websocket connection", function() {
-			expect(this.isWebSocketOpened).to.be.true;
-		});
-	});
+			it("should mark the socket as opened", function() {
+				expect(socket.isOpen).to.be.true;
+			});
 
-	describe("when opening a socket connection not as the master tab", function() {
-		beforeEach(function(done) {
-			crosstab.id = "other_tab";
+			it("should not broadcast open message on crosstab", function() {
+				expect(crosstab.broadcast.called).to.be.false;
+			});
 
-			socket.open();
-
-			setTimeout(done, 0);
-		});
-
-		it("should not raise opened event", function() {
-			expect(isOpenEventRaised).to.be.false;
-		});
-
-		it("should not mark the socket as opened", function() {
-			expect(socket.isOpen).to.be.false;
-		});
-
-		it("should broadcast open message on crosstab", function() {
-			expect(crosstab.broadcast.called).to.be.true;
-		});
-
-		it("should not open a real websocket connection", function() {
-			expect(this.isWebSocketOpened).to.be.false;
-		});
-	});
-
-	describe("when another master tab opens a socket connection", function() {
-		beforeEach(function(done) {
-			crosstab.id = "other_tab";
-
-			crosstab.broadcast("socket.opened");
-
-			setTimeout(done, 0);
-		});
-
-		it("should raise opened event", function() {
-			expect(isOpenEventRaised).to.be.true;
-		});
-
-		it("should mark the socket as opened", function() {
-			expect(socket.isOpen).to.be.true;
-		});
-
-		it("should not open a real websocket connection", function() {
-			expect(this.isWebSocketOpened).to.be.false;
+			it("should open a real websocket connection", function() {
+				expect(this.isWebSocketOpened).to.be.true;
+			});
 		});
 	});
 });
