@@ -91,6 +91,10 @@ function subscribeToTabEvents() {
 		}
 	});
 
+	crosstab.on(crosstab.util.eventTypes.demoteFromMaster, () => {
+		closeSocket.call(this);
+	});
+
 	crosstab.on(crosstab.util.eventTypes.tabClosed, ev => {
 		this.tabsListening[ev.origin] = false;
 	});
@@ -115,10 +119,15 @@ function openSocket() {
 			this.socket = null;
 			this.isOpen = false;
 
-			if (crosstab.supported) {
-				crosstab.broadcast("socket.closed");
-			} else {
-				this.emit("closed");
+			if (this.isMasterTab()) {
+				//only broadclast that the socket is closed if this is the master tab
+				//if this is not the master tab, another tab will have taken up the socket torch
+
+				if (crosstab.supported) {
+					crosstab.broadcast("socket.closed");
+				} else {
+					this.emit("closed");
+				}
 			}
 		};
 
