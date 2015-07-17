@@ -1,6 +1,6 @@
 {
   "name": "sockettes",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Smoothly choreograph your WebSocket connections",
   "main": "lib/socket.js",
   "author": "Archon Information Systems",
