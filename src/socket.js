@@ -7,6 +7,8 @@ export default class Sockette extends EventEmitter {
 		super();
 
 		this.url = url;
+		this.isOpen = false;
+
 		this.tabsListening = {};
 
 		subscribeToTabEvents.call(this);
@@ -100,6 +102,8 @@ function openSocket() {
 		this.socket = new WebSocket(url);
 
 		this.socket.onopen = () => {
+			this.isOpen = true;
+
 			if (crosstab.supported) {
 				crosstab.broadcast("socket.opened");
 			} else {
@@ -109,6 +113,7 @@ function openSocket() {
 
 		this.socket.onclose = () => {
 			this.socket = null;
+			this.isOpen = false;
 
 			if (crosstab.supported) {
 				crosstab.broadcast("socket.closed");
