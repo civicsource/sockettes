@@ -19,6 +19,9 @@ export default function() {
 		};
 
 		this.isWebSocketOpened = false;
+		this.resetWebSocketOpened = () => {
+			this.isWebSocketOpened = false;
+		};
 
 		var testSelf = this;
 		global.WebSocket = class WebSocket {
