@@ -107,53 +107,63 @@ function subscribeToTabEvents() {
 }
 
 function openSocket() {
-	if (!this.socket) {
-		var url = isFunction(this.url) ? this.url() : this.url;
-		this.socket = new WebSocket(url);
-
-		this.socket.onopen = () => {
-			this.isOpen = true;
-
+	if (this.socket) {
+		if (this.socket.readyState === WebSocket.OPEN) {
+			//somebody doesn't think the socket is open even though we are open, re-raise all the events again
 			if (crosstab.supported) {
 				crosstab.broadcast("socket.opened");
 			} else {
 				this.emit("opened");
 			}
-		};
+		}
+		return;
+	}
 
-		this.socket.onclose = () => {
-			this.socket = null;
-			this.isOpen = false;
+	var url = isFunction(this.url) ? this.url() : this.url;
+	this.socket = new WebSocket(url);
 
-			if (this.isMasterTab()) {
-				//only broadclast that the socket is closed if this is the master tab
-				//if this is not the master tab, another tab will have taken up the socket torch
+	this.socket.onopen = () => {
+		this.isOpen = true;
 
-				if (crosstab.supported) {
-					crosstab.broadcast("socket.closed");
-				} else {
-					this.emit("closed");
-				}
-			}
-		};
+		if (crosstab.supported) {
+			crosstab.broadcast("socket.opened");
+		} else {
+			this.emit("opened");
+		}
+	};
 
-		this.socket.onerror = err => {
-			if (this.socket.readyState === WebSocket.OPEN) {
-				//close the connection and try to reconnect
-				this.socket.close();
-			}
-		};
+	this.socket.onclose = () => {
+		this.socket = null;
+		this.isOpen = false;
 
-		this.socket.onmessage = ev => {
-			var msg = JSON.parse(ev.data);
+		if (this.isMasterTab()) {
+			//only broadclast that the socket is closed if this is the master tab
+			//if this is not the master tab, another tab will have taken up the socket torch
 
 			if (crosstab.supported) {
-				crosstab.broadcast("socket.message", msg);
+				crosstab.broadcast("socket.closed");
 			} else {
-				this.emit("message", msg);
+				this.emit("closed");
 			}
-		};
-	}
+		}
+	};
+
+	this.socket.onerror = err => {
+		if (this.socket.readyState === WebSocket.OPEN) {
+			//close the connection and try to reconnect
+			this.socket.close();
+		}
+	};
+
+	this.socket.onmessage = ev => {
+		var msg = JSON.parse(ev.data);
+
+		if (crosstab.supported) {
+			crosstab.broadcast("socket.message", msg);
+		} else {
+			this.emit("message", msg);
+		}
+	};
 }
 
 function sendOnSocket(data) {

@@ -7,10 +7,10 @@ import Sockette from "./../src/socket";
 import crosstab from "crosstab";
 
 describe("Opening a socket connection", function() {
-	var socket, isOpenEventRaised,isOpenTabMessageSent, isOpenedTabMessageSent;
+	var socket, isOpenEventRaised, isOpenTabMessageSent, isOpenedTabMessageSent;
 	behavesLikeStubs();
 
-	describe("with crosstab supported", function(){
+	describe("with crosstab supported", function() {
 		beforeEach(function() {
 			crosstab.supported = true;
 
@@ -74,8 +74,8 @@ describe("Opening a socket connection", function() {
 				setTimeout(done, 0);
 			});
 
-			it("should not raise opened event again", function() {
-				expect(isOpenEventRaised).to.be.false;
+			it("should raise opened event again", function() {
+				expect(isOpenEventRaised).to.be.true;
 			});
 
 			it("should mark the socket as opened", function() {
@@ -86,8 +86,8 @@ describe("Opening a socket connection", function() {
 				expect(isOpenTabMessageSent).to.be.true;
 			});
 
-			it("should not broadcast socket opened message on crosstab", function() {
-				expect(isOpenedTabMessageSent).to.be.false;
+			it("should broadcast socket opened message on crosstab", function() {
+				expect(isOpenedTabMessageSent).to.be.true;
 			});
 
 			it("should not open real websocket connection again", function() {
@@ -179,6 +179,38 @@ describe("Opening a socket connection", function() {
 
 			it("should open a real websocket connection", function() {
 				expect(this.isWebSocketOpened).to.be.true;
+			});
+		});
+
+		describe("when opening a socket connection after the socket is already open", function() {
+			beforeEach(function(done) {
+				socket.open();
+
+				setTimeout(done, 0);
+			});
+
+			beforeEach(function(done) {
+				isOpenEventRaised = false;
+				this.resetWebSocketOpened();
+
+				socket.open();
+				setTimeout(done, 0);
+			});
+
+			it("should raise opened event again", function() {
+				expect(isOpenEventRaised).to.be.true;
+			});
+
+			it("should mark the socket as opened", function() {
+				expect(socket.isOpen).to.be.true;
+			});
+
+			it("should not broadcast any messages on crosstab", function() {
+				expect(crosstab.broadcast.called).to.be.false;
+			});
+
+			it("should not open real websocket connection again", function() {
+				expect(this.isWebSocketOpened).to.be.false;
 			});
 		});
 	});
