@@ -1,6 +1,6 @@
 {
   "name": "sockettes",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Smoothly choreograph your WebSocket connections",
   "main": "lib/socket.js",
   "author": "Archon Information Systems",
@@ -14,6 +14,18 @@
     "type": "git",
     "url": "https://github.com/civicsource/sockettes.git"
   },
+  "keywords": [
+    "websocket",
+    "socket",
+    "tabs",
+    "crosstab",
+    "conserve",
+    "resources",
+    "persistent",
+    "connection",
+    "broadcast",
+    "localStorage"
+  ],
   "dependencies": {
     "crosstab": "^0.2.8",
     "eventemitter3": "^1.1.1",
