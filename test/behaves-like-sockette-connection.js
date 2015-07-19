@@ -12,6 +12,10 @@ export default function() {
 		this.isReceiveMessageSent = false;
 		this.receivedMessage = null;
 
+		this.isCloseMessageSent = false;
+		this.isClosedMessageSent = false;
+		this.isCloseEventRaised = false;
+
 		this.socket = new Sockette("wss://example.com/");
 
 		this.socket.on("opened", () => { this.isOpenEventRaised = true; });
@@ -23,6 +27,10 @@ export default function() {
 		crosstab.on("socket.sent", () => { this.isSentMessageSent = true; });
 		crosstab.on("socket.message", () => { this.isReceiveMessageSent = true; });
 
+		this.socket.on("closed", () => { this.isCloseEventRaised = true; });
+		crosstab.on("socket.close", () => { this.isCloseMessageSent = true; });
+		crosstab.on("socket.closed", () => { this.isClosedMessageSent = true; });
+
 		this.resetSocketteTracking = () => {
 			this.isOpenTabMessageSent = false;
 			this.isOpenedTabMessageSent = false;
@@ -32,6 +40,10 @@ export default function() {
 			this.isSentMessageSent = false;
 			this.isReceiveMessageSent = false;
 			this.receivedMessage = null;
+
+			this.isCloseMessageSent = false;
+			this.isClosedMessageSent = false;
+			this.isCloseEventRaised = false;
 		};
 	});
 }

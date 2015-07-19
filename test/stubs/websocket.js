@@ -2,10 +2,12 @@ export default function() {
 	beforeEach(function() {
 		this.isWebSocketOpened = false;
 		this.isWebSocketSent = false;
+		this.isWebSocketClose = false;
 
 		this.resetWebSocketTracking = () => {
 			this.isWebSocketOpened = false;
 			this.isWebSocketSent = false;
+			this.isWebSocketClose = false;
 		};
 
 		var testSelf = this;
@@ -24,6 +26,8 @@ export default function() {
 			}
 
 			close() {
+				testSelf.isWebSocketClose = true;
+
 				if (this.onclose) {
 					this.onclose();
 				}

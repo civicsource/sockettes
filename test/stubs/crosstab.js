@@ -8,8 +8,8 @@ export default function() {
 	beforeEach(function() {
 		emitter = new EventEmitter();
 
-		sinon.stub(crosstab, "broadcast", (name, data) => emitter.emit(name, {
-			origin: "some_other_tab",
+		sinon.stub(crosstab, "broadcast", (name, data, origin) => emitter.emit(name, {
+			origin: origin || "master",
 			data: data
 		}));
 		sinon.stub(crosstab, "on", emitter.on.bind(emitter));

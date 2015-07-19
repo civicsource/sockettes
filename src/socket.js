@@ -151,7 +151,7 @@ function openSocket() {
 		this.socket = null;
 		this.isOpen = false;
 
-		if (this.isMasterTab()) {
+		if (isMasterTab()) {
 			//only broadclast that the socket is closed if this is the master tab
 			//if this is not the master tab, another tab will have taken up the socket torch
 
@@ -202,6 +202,16 @@ function sendOnSocket(data) {
 }
 
 function closeSocket() {
+	if (!this.socket) {
+		//somebody doesn't think the socket is closed even though it is, re-raise all the events again
+		if (crosstab.supported) {
+			crosstab.broadcast("socket.closed");
+		} else {
+			this.emit("closed");
+		}
+		return;
+	}
+
 	if (this.socket && this.socket.readyState === WebSocket.OPEN) {
 		this.socket.close();
 	}
