@@ -56,7 +56,7 @@ describe("Opening a socket connection", function() {
 
 			beforeEach(function(done) {
 				this.resetSocketteTracking();
-				this.resetWebSocketOpened();
+				this.resetWebSocketTracking();
 
 				this.socket.open();
 				setTimeout(done, 0);
@@ -176,7 +176,7 @@ describe("Opening a socket connection", function() {
 
 			beforeEach(function(done) {
 				this.resetSocketteTracking();
-				this.resetWebSocketOpened();
+				this.resetWebSocketTracking();
 
 				this.socket.open();
 				setTimeout(done, 0);

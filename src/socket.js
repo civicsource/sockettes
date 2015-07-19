@@ -10,6 +10,7 @@ export default class Sockette extends EventEmitter {
 		this.isOpen = false;
 
 		this.tabsListening = {};
+		this.queuedMessages = [];
 
 		if (crosstab.supported) {
 			subscribeToTabEvents.call(this);
@@ -85,6 +86,14 @@ function subscribeToTabEvents() {
 		this.emit("opened");
 	});
 
+	crosstab.on("socket.sent", () => {
+		if (!this.isOpen) {
+			//apparently the websocket is open and we didn't know it
+			this.isOpen = true;
+			this.emit("opened");
+		}
+	});
+
 	crosstab.on("socket.closed", this.emit.bind(this, "closed"));
 
 	crosstab.on("socket.message", ev => {
@@ -130,6 +139,12 @@ function openSocket() {
 		} else {
 			this.emit("opened");
 		}
+
+		while (this.queuedMessages.length > 0) {
+			//send any queued messages on the socket now that it is open
+			var msg = this.queuedMessages.pop();
+			sendOnSocket.call(this, msg);
+		}
 	};
 
 	this.socket.onclose = () => {
@@ -150,6 +165,10 @@ function openSocket() {
 
 	this.socket.onerror = err => {
 		if (this.socket.readyState === WebSocket.OPEN) {
+			//clear any queued messages - don't want to get stuck in an infinite loop
+			this.queuedMessages = [];
+			this.emit("error");
+
 			//close the connection and try to reconnect
 			this.socket.close();
 		}
@@ -167,8 +186,18 @@ function openSocket() {
 }
 
 function sendOnSocket(data) {
+	if (!this.isOpen) {
+		openSocket.call(this);
+	}
+
 	if (this.socket && this.socket.readyState === WebSocket.OPEN) {
 		this.socket.send(JSON.stringify(data));
+
+		if (crosstab.supported) {
+			crosstab.broadcast("socket.sent", data);
+		}
+	} else {
+		this.queuedMessages.push(data);
 	}
 }
 

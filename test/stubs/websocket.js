@@ -1,9 +1,11 @@
 export default function() {
 	beforeEach(function() {
 		this.isWebSocketOpened = false;
+		this.isWebSocketSent = false;
 
-		this.resetWebSocketOpened = () => {
+		this.resetWebSocketTracking = () => {
 			this.isWebSocketOpened = false;
+			this.isWebSocketSent = false;
 		};
 
 		var testSelf = this;
@@ -11,7 +13,10 @@ export default function() {
 			constructor() {
 				testSelf.isWebSocketOpened = true;
 
+				this.readyState = 0;
+
 				setTimeout(() => {
+					this.readyState = 1;
 					if (this.onopen) {
 						this.onopen();
 					}
@@ -25,6 +30,8 @@ export default function() {
 			}
 
 			send(data) {
+				testSelf.isWebSocketSent = true;
+
 				//just echo it right back
 				if (this.onmessage) {
 					this.onmessage({
@@ -33,5 +40,7 @@ export default function() {
 				}
 			}
 		};
+
+		global.WebSocket.OPEN = 1;
 	});
 }
