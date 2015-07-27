@@ -53,6 +53,11 @@ export default class Sockette extends EventEmitter {
 }
 
 function isMasterTab() {
+	if (!crosstab.supported) {
+		//if crosstab isn't supported, this is always the master tab
+		return true;
+	}
+
 	var masterTab = crosstab.util.tabs[crosstab.util.keys.MASTER_TAB];
 	return masterTab && masterTab.id === crosstab.id;
 }
