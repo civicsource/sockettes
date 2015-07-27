@@ -53,7 +53,8 @@ export default class Sockette extends EventEmitter {
 }
 
 function isMasterTab() {
-	return crosstab.util.tabs[crosstab.util.keys.MASTER_TAB].id === crosstab.id;
+	var masterTab = crosstab.util.tabs[crosstab.util.keys.MASTER_TAB];
+	return masterTab && masterTab.id === crosstab.id;
 }
 
 function subscribeToTabEvents() {
