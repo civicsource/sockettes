@@ -27,7 +27,7 @@
     "localStorage"
   ],
   "dependencies": {
-    "crosstab": "^0.2.8",
+    "crosstab": "^0.2.9",
     "eventemitter3": "^1.1.1",
     "lodash.isfunction": "^3.0.6"
   },
